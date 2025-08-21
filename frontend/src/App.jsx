@@ -2,12 +2,39 @@ import React from "react";
 import Navbar from "./_components/Navbar";
 import HomePage from "./pages/HomePage";
 import Footer from "./_components/Footer";
+import { Route, Routes } from "react-router-dom";
+import OurPackages from "./pages/OurPackages";
+import MyBookings from "./pages/MyBookings";
+import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
+import SignInPage from "./pages/Auth/SignInPage";
+import SignUpPage from "./pages/Auth/SignUpPage";
 
 const App = () => {
   return (
     <div>
       <Navbar />
-      <HomePage />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/packages" element={<OurPackages />} />
+        <Route path="/sign-in/*" element={<SignInPage />} />
+        <Route path="/sign-up/*" element={<SignUpPage />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/my-bookings"
+          element={
+            <>
+              <SignedIn>
+                <MyBookings />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+      </Routes>
       <Footer />
     </div>
   );

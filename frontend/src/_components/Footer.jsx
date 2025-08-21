@@ -1,143 +1,119 @@
 import { motion } from "framer-motion";
 import {
-  Plane,
-  Mail,
-  Phone,
   MapPin,
+  Phone,
+  Mail,
   Facebook,
   Twitter,
   Instagram,
   Youtube,
+  Plane,
+  Heart,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
+const footerLinks = {
+  destinations: [
+    "Hunza Valley",
+    "Skardu",
+    "Swat Valley",
+    "Fairy Meadows",
+    "Kaghan Valley",
+    "Chitral",
+  ],
+  services: [
+    "Travel Packages",
+    "Hotel Booking",
+    "Transportation",
+    "Tour Guides",
+    "Adventure Tours",
+    "Cultural Tours",
+  ],
+  support: [
+    "Help Center",
+    "Contact Us",
+    "Travel Insurance",
+    "Booking Policy",
+    "Cancellation",
+    "Safety Guidelines",
+  ],
+};
+
+const socialLinks = [
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Youtube, href: "#", label: "YouTube" },
+];
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-white">
-      {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 py-12">
-        <div className="container mx-auto px-4">
+    <footer className="bg-gray-900 text-white">
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Brand Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center"
+            className="lg:col-span-1"
           >
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Subscribe to Our Newsletter
-            </h3>
-            <p className="text-lg mb-6 opacity-90">
-              Get the latest travel deals and destination updates delivered to
-              your inbox
+            <div className="flex items-center mb-6">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 8,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
+                className="mr-3"
+              >
+                <Plane className="w-8 h-8 text-green-400" />
+              </motion.div>
+              <h3 className="text-2xl font-bold">Travel Hub</h3>
+            </div>
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              Your AI-powered travel companion for exploring Pakistan's most
+              beautiful destinations. Creating unforgettable memories, one
+              journey at a time.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/70 backdrop-blur-sm"
-              />
-              <Button className="bg-white text-purple-600 hover:bg-white/90 font-semibold px-8">
-                Subscribe
-              </Button>
+
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <div className="flex items-center text-gray-300">
+                <MapPin className="w-5 h-5 text-green-400 mr-3" />
+                <span>Islamabad, Pakistan</span>
+              </div>
+              <div className="flex items-center text-gray-300">
+                <Phone className="w-5 h-5 text-green-400 mr-3" />
+                <span>+92 300 1234567</span>
+              </div>
+              <div className="flex items-center text-gray-300">
+                <Mail className="w-5 h-5 text-green-400 mr-3" />
+                <span>info@travelhub.pk</span>
+              </div>
             </div>
           </motion.div>
-        </div>
-      </div>
 
-      {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
+          {/* Destinations */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-                className="p-2 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full"
-              >
-                <Plane className="h-6 w-6 text-white" />
-              </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
-                Travel Hub
-              </span>
-            </div>
-            <p className="text-slate-300 mb-4">
-              Your AI-powered travel companion for exploring the breathtaking
-              northern areas of Pakistan and beyond.
-            </p>
-            <div className="flex space-x-4">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
-                <motion.a
-                  key={index}
-                  href="#"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  className="p-2 bg-slate-800 rounded-full hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
-                >
-                  <Icon className="h-5 w-5" />
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h4 className="text-lg font-semibold mb-4 text-orange-400">
-              Quick Links
-            </h4>
-            <ul className="space-y-2">
-              {[
-                "Home",
-                "Destinations",
-                "Packages",
-                "AI Assistant",
-                "Services",
-                "Contact",
-              ].map((link) => (
-                <li key={link}>
-                  <motion.a
-                    href="#"
-                    whileHover={{ x: 5 }}
-                    className="text-slate-300 hover:text-orange-400 transition-colors duration-300"
-                  >
-                    {link}
-                  </motion.a>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Popular Destinations */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <h4 className="text-lg font-semibold mb-4 text-orange-400">
+            <h4 className="text-lg font-semibold mb-6 text-green-400">
               Popular Destinations
             </h4>
-            <ul className="space-y-2">
-              {[
-                "Hunza Valley",
-                "Skardu Lakes",
-                "K2 Base Camp",
-                "Fairy Meadows",
-                "Deosai Plains",
-                "Naran Kaghan",
-              ].map((destination) => (
+            <ul className="space-y-3">
+              {footerLinks.destinations.map((destination, index) => (
                 <li key={destination}>
                   <motion.a
                     href="#"
+                    className="text-gray-300 hover:text-green-400 transition-colors"
                     whileHover={{ x: 5 }}
-                    className="text-slate-300 hover:text-orange-400 transition-colors duration-300"
+                    transition={{ duration: 0.2 }}
                   >
                     {destination}
                   </motion.a>
@@ -146,27 +122,75 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Contact Info */}
+          {/* Services */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h4 className="text-lg font-semibold mb-4 text-orange-400">
-              Contact Us
+            <h4 className="text-lg font-semibold mb-6 text-green-400">
+              Our Services
             </h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                <span className="text-slate-300">Islamabad, Pakistan</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                <span className="text-slate-300">+92 300 1234567</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                <span className="text-slate-300">info@travelhub.pk</span>
+            <ul className="space-y-3">
+              {footerLinks.services.map((service, index) => (
+                <li key={service}>
+                  <motion.a
+                    href="#"
+                    className="text-gray-300 hover:text-green-400 transition-colors"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {service}
+                  </motion.a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Support */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <h4 className="text-lg font-semibold mb-6 text-green-400">
+              Support
+            </h4>
+            <ul className="space-y-3 mb-6">
+              {footerLinks.support.map((item, index) => (
+                <li key={item}>
+                  <motion.a
+                    href="#"
+                    className="text-gray-300 hover:text-green-400 transition-colors"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {item}
+                  </motion.a>
+                </li>
+              ))}
+            </ul>
+
+            {/* Social Links */}
+            <div>
+              <h5 className="text-sm font-semibold mb-4 text-green-400">
+                Follow Us
+              </h5>
+              <div className="flex space-x-4">
+                {socialLinks.map((social, index) => (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-300 hover:bg-green-600 hover:text-white transition-colors"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    aria-label={social.label}
+                  >
+                    <social.icon className="w-5 h-5" />
+                  </motion.a>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -174,43 +198,34 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-slate-800">
-        <div className="container mx-auto px-4 py-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <p className="text-slate-400 text-sm">
-              © 2024 Travel Hub. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-sm">
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.05 }}
-                className="text-slate-400 hover:text-orange-400 transition-colors duration-300"
-              >
-                Privacy Policy
-              </motion.a>
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.05 }}
-                className="text-slate-400 hover:text-orange-400 transition-colors duration-300"
-              >
-                Terms of Service
-              </motion.a>
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.05 }}
-                className="text-slate-400 hover:text-orange-400 transition-colors duration-300"
-              >
-                Cookie Policy
-              </motion.a>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="border-t border-gray-800 py-6"
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center text-gray-400 mb-4 md:mb-0">
+              <span>© 2024 Travel Hub. Made with</span>
+              <Heart className="w-4 h-4 text-red-500 mx-2" />
+              <span>in Pakistan</span>
             </div>
-          </motion.div>
+            <div className="flex space-x-6 text-sm text-gray-400">
+              <a href="#" className="hover:text-green-400 transition-colors">
+                Privacy Policy
+              </a>
+              <a href="#" className="hover:text-green-400 transition-colors">
+                Terms of Service
+              </a>
+              <a href="#" className="hover:text-green-400 transition-colors">
+                Cookie Policy
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 };
