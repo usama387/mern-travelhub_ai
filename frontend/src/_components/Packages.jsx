@@ -275,6 +275,7 @@ const PopularPackages = () => {
           <Button
             size="lg"
             className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300 px-8 py-3 transform hover:scale-105"
+          onClick={() => window.location.href = "/packages"}
           >
             View All Packages
           </Button>
