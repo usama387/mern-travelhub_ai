@@ -1,3 +1,4 @@
+// OurPackages.jsx (updated)
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -17,20 +18,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
-import {
   MapPin,
   Clock,
   Users,
@@ -40,6 +27,7 @@ import {
   Wallet,
   Camera,
 } from "lucide-react";
+import PackagesStats from "@/_components/PackagesStats";
 
 // Sample data for packages
 const packagesData = [
@@ -159,36 +147,6 @@ const packagesData = [
   },
 ];
 
-// Chart data for seasonal trips with area information
-const seasonalData = [
-  {
-    season: "Spring 2023",
-    trips: 245,
-    revenue: 18500000,
-    area: "Hunza Valley",
-  },
-  {
-    season: "Summer 2023",
-    trips: 420,
-    revenue: 32800000,
-    area: "Fairy Meadows",
-  },
-  { season: "Autumn 2023", trips: 380, revenue: 28900000, area: "Swat Valley" },
-  { season: "Winter 2023", trips: 180, revenue: 14200000, area: "Skardu" },
-  {
-    season: "Spring 2024",
-    trips: 290,
-    revenue: 22100000,
-    area: "Kaghan Valley",
-  },
-  {
-    season: "Summer 2024",
-    trips: 485,
-    revenue: 38700000,
-    area: "Fairy Meadows",
-  },
-];
-
 const packageTypes = [
   {
     value: "all",
@@ -238,24 +196,6 @@ const priceRanges = [
   { value: "100000-150000", label: "PKR 100,000 - 150,000" },
   { value: "150000+", label: "PKR 150,000+" },
 ];
-
-// Custom tooltip for the chart
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-md">
-        <p className="font-bold text-gray-800">{label}</p>
-        <p className="text-green-600">Trips: {data.trips}</p>
-        <p className="text-blue-600">
-          Revenue: PKR {data.revenue.toLocaleString()}
-        </p>
-        <p className="text-purple-600">Popular Area: {data.area}</p>
-      </div>
-    );
-  }
-  return null;
-};
 
 const OurPackages = () => {
   const [selectedType, setSelectedType] = useState("all");
@@ -375,59 +315,6 @@ const OurPackages = () => {
         </div>
       </motion.section>
 
-      {/* Analytics Chart Section */}
-      <motion.section
-        className="py-12 bg-gray-50"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.6 }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Travel Trends & Statistics
-            </h2>
-            <p className="text-gray-600">
-              See how many travelers chose their dream destinations in recent
-              seasons
-            </p>
-          </div>
-
-          <Card className="max-w-4xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-green-700">
-                Seasonal Trip Statistics
-              </CardTitle>
-              <CardDescription>
-                Number of trips completed across different seasons with popular
-                areas
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  trips: {
-                    label: "Number of Trips",
-                    color: "hsl(var(--chart-1))",
-                  },
-                }}
-                className="h-[300px]"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={seasonalData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="season" />
-                    <YAxis />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="trips" fill="#16a34a" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </motion.section>
-
       {/* Filters Section */}
       <motion.section
         className="py-8 bg-white border-b"
@@ -436,61 +323,66 @@ const OurPackages = () => {
         transition={{ delay: 1.2, duration: 0.6 }}
       >
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-4 items-center justify-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">
-                Package Type:
-              </span>
-              <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {packageTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">
+                  Package Type:
+                </span>
+                <Select value={selectedType} onValueChange={setSelectedType}>
+                  <SelectTrigger className="w-48 border-green-600 text-green-600">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {packageTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">Area:</span>
-              <Select value={selectedArea} onValueChange={setSelectedArea}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select area" />
-                </SelectTrigger>
-                <SelectContent>
-                  {areas.map((area) => (
-                    <SelectItem key={area.value} value={area.value}>
-                      {area.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Area:</span>
+                <Select value={selectedArea} onValueChange={setSelectedArea}>
+                  <SelectTrigger className="w-48 border-green-600 text-green-600">
+                    <SelectValue placeholder="Select area" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {areas.map((area) => (
+                      <SelectItem key={area.value} value={area.value}>
+                        {area.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">
-                Price Range:
-              </span>
-              <Select
-                value={selectedPriceRange}
-                onValueChange={setSelectedPriceRange}
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select price range" />
-                </SelectTrigger>
-                <SelectContent>
-                  {priceRanges.map((range) => (
-                    <SelectItem key={range.value} value={range.value}>
-                      {range.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">
+                  Price Range:
+                </span>
+                <Select
+                  value={selectedPriceRange}
+                  onValueChange={setSelectedPriceRange}
+                >
+                  <SelectTrigger className="w-48 border-green-600 text-green-600">
+                    <SelectValue placeholder="Select price range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceRanges.map((range) => (
+                      <SelectItem key={range.value} value={range.value}>
+                        {range.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            
+            {/* Add the ChartDialog component here */}
+            <PackagesStats />
           </div>
         </div>
       </motion.section>
