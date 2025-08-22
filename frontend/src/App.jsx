@@ -8,6 +8,7 @@ import MyBookings from "./pages/MyBookings";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
 import SignInPage from "./pages/Auth/SignInPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
+import BookingPage from "./pages/BookingPage";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/packages" element={<OurPackages />} />
         <Route path="/sign-in/*" element={<SignInPage />} />
         <Route path="/sign-up/*" element={<SignUpPage />} />
+        <Route path="/booking*" element={<BookingPage />} />
 
         {/* Protected Routes */}
         <Route
