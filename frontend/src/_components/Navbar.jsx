@@ -13,71 +13,18 @@ import {
   Plane,
   Menu,
   X,
-  MapPin,
   Package,
   Bot,
-  Settings,
   Phone,
   Package2,
 } from "lucide-react";
+import { useUser, UserButton, SignInButton, SignUpButton } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 const navigationItems = [
   { name: "Home", href: "/", icon: null },
-  {
-    name: "Packages",
-    href: "/packages",
-    icon: Package,
-    dropdown: [
-      {
-        name: "Family Packages",
-        href: "/packages/family",
-        description: "Perfect for family trips",
-      },
-      {
-        name: "Honeymoon Specials",
-        href: "/packages/honeymoon",
-        description: "Romantic getaways",
-      },
-      {
-        name: "Adventure Tours",
-        href: "/packages/adventure",
-        description: "For thrill seekers",
-      },
-      {
-        name: "Budget Friendly",
-        href: "/packages/budget",
-        description: "Great value packages",
-      },
-    ],
-  },
+  { name: "Packages", href: "/packages", icon: Package },
   { name: "AI Assistant", href: "/ai-assistant", icon: Bot },
-  {
-    name: "Services",
-    href: "/services",
-    icon: Settings,
-    dropdown: [
-      {
-        name: "Hotel Booking",
-        href: "/services/hotels",
-        description: "Find perfect accommodations",
-      },
-      {
-        name: "Flight Booking",
-        href: "/services/flights",
-        description: "Book domestic & international flights",
-      },
-      {
-        name: "Car Rental",
-        href: "/services/cars",
-        description: "Rent vehicles for your journey",
-      },
-      {
-        name: "Travel Insurance",
-        href: "/services/insurance",
-        description: "Stay protected while traveling",
-      },
-    ],
-  },
   {
     name: "Bookings",
     href: "/my-bookings",
@@ -95,12 +42,15 @@ const navigationItems = [
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isSignedIn } = useUser();
+  const role = user?.publicMetadata?.role;
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo Section */}
+          {/* Logo */}
           <div className="flex items-center space-x-2">
             <motion.div
               initial={{ rotate: 0 }}
@@ -133,22 +83,22 @@ const Navbar = () => {
                   <NavigationMenuItem key={item.name}>
                     {item.dropdown ? (
                       <>
-                        <NavigationMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                        <NavigationMenuTrigger>
                           {item.icon && <item.icon className="mr-2 h-4 w-4" />}
                           {item.name}
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
-                          <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                          <div className="grid w-[400px] gap-3 p-4 md:w-[500px] lg:w-[600px] md:grid-cols-2">
                             {item.dropdown.map((dropdownItem) => (
                               <NavigationMenuLink
                                 key={dropdownItem.name}
                                 href={dropdownItem.href}
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                className="block rounded-md p-3 hover:bg-accent"
                               >
-                                <div className="text-sm font-medium leading-none text-primary">
+                                <div className="text-sm font-medium text-primary">
                                   {dropdownItem.name}
                                 </div>
-                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                <p className="text-sm text-muted-foreground">
                                   {dropdownItem.description}
                                 </p>
                               </NavigationMenuLink>
@@ -159,7 +109,7 @@ const Navbar = () => {
                     ) : (
                       <NavigationMenuLink
                         href={item.href}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium hover:bg-accent rounded-md"
                       >
                         {item.icon && <item.icon className="mr-2 h-4 w-4" />}
                         {item.name}
@@ -171,20 +121,32 @@ const Navbar = () => {
             </NavigationMenu>
           </div>
 
-          {/* Authentication Buttons */}
+          {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              className="text-primary hover:text-primary/80"
-            >
-              Sign In
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Sign Up
-            </Button>
+            {role === "admin" && (
+              <Button
+                onClick={() => navigate("/dashboard")}
+              >
+                Admin Dashboard
+              </Button>
+            )}
+            {isSignedIn ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+              <>
+                <SignInButton mode="modal">
+                  <Button variant="ghost">Sign In</Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button className="bg-primary text-primary-foreground">
+                    Sign Up
+                  </Button>
+                </SignUpButton>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -211,7 +173,7 @@ const Navbar = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="flex items-center px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-accent transition-colors"
+                  className="flex items-center px-3 py-2 rounded-md text-base font-medium hover:bg-accent"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.icon && <item.icon className="mr-2 h-4 w-4" />}
@@ -219,15 +181,22 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Button
-                  variant="ghost"
-                  className="text-primary hover:text-primary/80 justify-start"
-                >
-                  Sign In
-                </Button>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground justify-start">
-                  Sign Up
-                </Button>
+                {isSignedIn ? (
+                  <UserButton afterSignOutUrl="/" />
+                ) : (
+                  <>
+                    <SignInButton mode="modal">
+                      <Button variant="ghost" className="justify-start">
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <Button className="bg-primary text-primary-foreground justify-start">
+                        Sign Up
+                      </Button>
+                    </SignUpButton>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

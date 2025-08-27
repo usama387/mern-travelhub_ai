@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Package {
+  id                     String     @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl               String
+  destination            String
+  description            String
+  location               String
+  hotelName              String
+  hotelType              HotelType
+  difficulty             Difficulty
+  price                  Float 
+  duration               Int
+  peopleCount            Int
+  roomsCount             Int
+  complementaryBreakfast Boolean    @default(false)
+  pickAndDrop            Boolean    @default(false)
+  features               String[]  
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt  
+  bookings               Booking[]
+}
+
+model Booking {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   
+  packageId       String   
+  persons         Int
+  checkIn         DateTime
+  checkOut        DateTime
+  transportation  String   
+  hotel           String   
+  totalPrice      Float
+  status          BookingStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  package         Package  @relation(fields: [packageId], references: [id])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum HotelType {
+  STANDARD  
+  DELUXE    
+  LUXURY    
+}
+
+enum Difficulty {
+  EASY
+  MODERATE
+  EXTREME
+}

@@ -1,4 +1,3 @@
-// OurPackages.jsx (updated)
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -26,126 +25,13 @@ import {
   Mountain,
   Wallet,
   Camera,
+  Home,
+  Utensils,
+  Car,
 } from "lucide-react";
 import PackagesStats from "@/_components/PackagesStats";
-
-// Sample data for packages
-const packagesData = [
-  {
-    id: 1,
-    title: "Hunza Valley Family Adventure",
-    type: "family",
-    area: "hunza",
-    price: 85000,
-    duration: "7 days",
-    groupSize: "4-8 people",
-    rating: 4.8,
-    image: "/hunza-valley-landscape.png",
-    description:
-      "Perfect family getaway to the stunning Hunza Valley with comfortable accommodations and kid-friendly activities.",
-    features: [
-      "Family-friendly hotels",
-      "Guided tours",
-      "Local cuisine",
-      "Cultural experiences",
-    ],
-  },
-  {
-    id: 2,
-    title: "K2 Base Camp Trek",
-    type: "adventure",
-    area: "skardu",
-    price: 150000,
-    duration: "14 days",
-    groupSize: "6-12 people",
-    rating: 4.9,
-    image: "https://i.pinimg.com/736x/f9/e7/9c/f9e79cb1beb58126911f1e84f571e5b7.jpg",
-    description:
-      "Ultimate adventure trek to K2 Base Camp for experienced hikers and mountaineers.",
-    features: [
-      "Professional guides",
-      "Camping equipment",
-      "High altitude training",
-      "Emergency support",
-    ],
-  },
-  {
-    id: 3,
-    title: "Romantic Swat Honeymoon",
-    type: "honeymoon",
-    area: "swat",
-    price: 65000,
-    duration: "5 days",
-    groupSize: "2 people",
-    rating: 4.7,
-    image: "https://i.pinimg.com/736x/94/3c/56/943c562876ef4ebed048226044b50e4a.jpg",
-    description:
-      "Romantic escape to the Switzerland of Pakistan with luxury accommodations and private tours.",
-    features: [
-      "Luxury resorts",
-      "Private dining",
-      "Couple activities",
-      "Spa treatments",
-    ],
-  },
-  {
-    id: 4,
-    title: "Budget Kaghan Valley Tour",
-    type: "budget",
-    area: "kaghan",
-    price: 35000,
-    duration: "4 days",
-    groupSize: "8-15 people",
-    rating: 4.5,
-    image: "/kaghan-valley-lake.png",
-    description:
-      "Affordable group tour to beautiful Kaghan Valley with basic but comfortable accommodations.",
-    features: [
-      "Group discounts",
-      "Shared accommodations",
-      "Local transport",
-      "Guided sightseeing",
-    ],
-  },
-  {
-    id: 5,
-    title: "Fairy Meadows Family Camp",
-    type: "family",
-    area: "fairy-meadows",
-    price: 95000,
-    duration: "6 days",
-    groupSize: "4-10 people",
-    rating: 4.6,
-    image: "/fairy-meadows-nanga-parbat.png",
-    description:
-      "Family camping experience at Fairy Meadows with stunning views of Nanga Parbat.",
-    features: [
-      "Family tents",
-      "Bonfire nights",
-      "Nature walks",
-      "Photography sessions",
-    ],
-  },
-  {
-    id: 6,
-    title: "Skardu Adventure Expedition",
-    type: "adventure",
-    area: "skardu",
-    price: 120000,
-    duration: "10 days",
-    groupSize: "6-8 people",
-    rating: 4.8,
-    image: "https://i.pinimg.com/736x/84/1c/84/841c8480a1be5206325e3dc1390636f4.jpg",
-    description:
-      "Thrilling adventure in Skardu with jeep safaris, rock climbing, and desert camping.",
-    features: [
-      "4WD jeep tours",
-      "Rock climbing",
-      "Desert camping",
-      "Local guides",
-    ],
-  },
-];
+import { useGetAllPackagesQuery } from "@/features/api/packageApi";
+import { useNavigate } from "react-router-dom";
 
 const packageTypes = [
   {
@@ -187,6 +73,9 @@ const areas = [
   { value: "skardu", label: "Skardu" },
   { value: "kaghan", label: "Kaghan Valley" },
   { value: "fairy-meadows", label: "Fairy Meadows" },
+  { value: "karakoram", label: "Karakoram Range" },
+  { value: "deosai", label: "Deosai Plains" },
+  { value: "chitral", label: "Chitral" },
 ];
 
 const priceRanges = [
@@ -197,15 +86,96 @@ const priceRanges = [
   { value: "150000+", label: "PKR 150,000+" },
 ];
 
+// Helper function to format price
+const formatPrice = (price) => {
+  return `PKR ${price.toLocaleString()}`;
+};
+
+// Helper function to get difficulty display text
+const getDifficultyText = (difficulty) => {
+  switch (difficulty) {
+    case "EASY":
+      return "Easy";
+    case "MODERATE":
+      return "Moderate";
+    case "EXTREME":
+      return "Extreme";
+    default:
+      return difficulty;
+  }
+};
+
+const getDifficultyColor = (difficulty) => {
+  switch (difficulty) {
+    case "EASY":
+      return "bg-green-500/30 text-green-400 border-green-500/30";
+    case "MODERATE":
+      return "bg-yellow-500/30 text-yellow-400 border-yellow-500/30";
+    case "EXTREME":
+      return "bg-red-500/30 text-red-400 border-red-500/30";
+    default:
+      return "bg-gray-500/30 text-gray-400 border-gray-500/30";
+  }
+};
+
 const OurPackages = () => {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedArea, setSelectedArea] = useState("all");
   const [selectedPriceRange, setSelectedPriceRange] = useState("all");
 
+  const { data: packagesResponse, isLoading, error } = useGetAllPackagesQuery();
+
+  // Extract packages from response or use empty array as fallback
+  const packagesData = packagesResponse?.packages || [];
+
+  // Function to determine package type based on content
+  const getPackageType = (pkg) => {
+    const lowerDesc = pkg.description.toLowerCase();
+    const lowerDest = pkg.destination.toLowerCase();
+
+    if (
+      lowerDesc.includes("honeymoon") ||
+      lowerDest.includes("honeymoon") ||
+      lowerDesc.includes("romantic")
+    ) {
+      return "honeymoon";
+    } else if (lowerDesc.includes("family") || lowerDest.includes("family")) {
+      return "family";
+    } else if (
+      lowerDesc.includes("adventure") ||
+      lowerDest.includes("adventure") ||
+      lowerDesc.includes("trek") ||
+      lowerDest.includes("trek") ||
+      lowerDesc.includes("camp") ||
+      lowerDest.includes("camp")
+    ) {
+      return "adventure";
+    } else if (pkg.price < 50000) {
+      return "budget";
+    }
+    return "standard";
+  };
+
+  // Function to map API location to area filter values
+  const getPackageArea = (location) => {
+    const lowerLoc = location.toLowerCase();
+    if (lowerLoc.includes("hunza")) return "hunza";
+    if (lowerLoc.includes("swat")) return "swat";
+    if (lowerLoc.includes("skardu")) return "skardu";
+    if (lowerLoc.includes("kaghan")) return "kaghan";
+    if (lowerLoc.includes("fairy")) return "fairy-meadows";
+    if (lowerLoc.includes("karakoram")) return "karakoram";
+    if (lowerLoc.includes("deosai")) return "deosai";
+    if (lowerLoc.includes("chitral")) return "chitral";
+    return "other";
+  };
+
   // Filter packages based on selected filters
   const filteredPackages = packagesData.filter((pkg) => {
-    const typeMatch = selectedType === "all" || pkg.type === selectedType;
-    const areaMatch = selectedArea === "all" || pkg.area === selectedArea;
+    const typeMatch =
+      selectedType === "all" || getPackageType(pkg) === selectedType;
+    const areaMatch =
+      selectedArea === "all" || getPackageArea(pkg.location) === selectedArea;
 
     let priceMatch = true;
     if (selectedPriceRange !== "all") {
@@ -243,13 +213,53 @@ const OurPackages = () => {
     },
   };
 
+  // hook for navigation
+  const navigate = useNavigate();
+
+  // naviagtes user on booking page with the package selected
+  const handleBookNow = (packageId) => {
+    navigate(`/booking/${packageId}`);
+    window.scrollTo(0, 0);
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading packages...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600">
+            Error loading packages. Please try again later.
+          </p>
+          <Button
+            className="mt-4 bg-green-600 hover:bg-green-700"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section with background image */}
       <motion.section
         className="relative py-16 bg-cover bg-center mx-2 mt-2"
         style={{
-          backgroundImage: `url('https://i.pinimg.com/1200x/92/98/6e/92986e30a1500706f5037fcaebfb7013.jpg')`, 
+          backgroundImage: `url('https://i.pinimg.com/1200x/92/98/6e/92986e30a1500706f5037fcaebfb7013.jpg')`,
         }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -380,7 +390,7 @@ const OurPackages = () => {
                 </Select>
               </div>
             </div>
-            
+
             {/* Add the ChartDialog component here */}
             <PackagesStats />
           </div>
@@ -403,88 +413,136 @@ const OurPackages = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPackages.map((pkg) => (
-              <motion.div key={pkg.id} variants={itemVariants}>
-                <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group">
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={pkg.image || "/placeholder.svg"}
-                      alt={pkg.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-green-600 hover:bg-green-700">
-                        {packageTypes.find((t) => t.value === pkg.type)
-                          ?.label ||
-                          pkg.type.charAt(0).toUpperCase() + pkg.type.slice(1)}
-                      </Badge>
-                    </div>
-                    <div className="absolute top-4 right-4">
-                      <div className="flex items-center gap-1 bg-white/90 px-2 py-1 rounded-full">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">
-                          {pkg.rating}
-                        </span>
+            {filteredPackages.map((pkg) => {
+              const packageType = getPackageType(pkg);
+              const packageArea = getPackageArea(pkg.location);
+
+              return (
+                <motion.div
+                  key={pkg.id}
+                  variants={itemVariants}
+                  whileHover={{ y: -5 }}
+                  className="group"
+                >
+                  <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                    {/* Package Image */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={pkg.imageUrl || "/placeholder.svg"}
+                        alt={pkg.destination}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute bottom-4 left-4">
+                        <Badge className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {pkg.destination}
+                        </Badge>
                       </div>
                     </div>
-                  </div>
 
-                  <CardHeader>
-                    <CardTitle className="text-xl text-gray-900">
-                      {pkg.title}
-                    </CardTitle>
-                    <CardDescription>{pkg.description}</CardDescription>
-                  </CardHeader>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-2xl font-bold text-gray-800 group-hover:text-green-700 transition-colors">
+                        {pkg.destination}
+                      </CardTitle>
+                      <CardDescription className="text-base text-gray-700 leading-6">
+                        {pkg.description}
+                      </CardDescription>
+                    </CardHeader>
 
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{pkg.duration}</span>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Package Details */}
+                        <div className="grid grid-cols-2 gap-4 text-base text-gray-700">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4 text-green-600" />
+                            <span>{pkg.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-4 h-4 text-green-600" />
+                            <span>{pkg.duration} Days</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 text-green-600" />
+                            <span>4.8</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-bold text-green-600">
+                              {formatPrice(pkg.price)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 col-span-2">
+                            <Home className="w-4 h-4 text-green-600" />
+                            <span>{pkg.hotelName}</span>
+                          </div>
+                          <div className="flex items-center gap-1 col-span-2">
+                            <Users className="w-4 h-4 text-green-600" />
+                            <span>{pkg.peopleCount} people</span>
+                          </div>
+                          <div className="flex items-center gap-1 col-span-2">
+                            <Home className="w-4 h-4 text-green-600" />
+                            <span>{pkg.roomsCount} rooms</span>
+                          </div>
+                          {pkg.complementaryBreakfast && (
+                            <div className="flex items-center gap-1 col-span-2">
+                              <Utensils className="w-4 h-4 text-green-600" />
+                              <span>Complementary Breakfast</span>
+                            </div>
+                          )}
+                          {pkg.pickAndDrop && (
+                            <div className="flex items-center gap-1 col-span-2">
+                              <Car className="w-4 h-4 text-green-600" />
+                              <span>Pick & Drop Service</span>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{pkg.groupSize}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          <span className="capitalize">
-                            {pkg.area.replace("-", " ")}
-                          </span>
-                        </div>
-                      </div>
 
-                      <div className="flex flex-wrap gap-1">
-                        {pkg.features.slice(0, 3).map((feature, index) => (
+                        <div className="flex items-center gap-2">
                           <Badge
-                            key={index}
-                            variant="secondary"
-                            className="text-xs"
+                            className={`${getDifficultyColor(
+                              pkg.difficulty
+                            )} border text-sm px-3 py-1`}
                           >
-                            {feature}
+                            {getDifficultyText(pkg.difficulty)}
                           </Badge>
-                        ))}
-                      </div>
 
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-2xl font-bold text-green-600">
-                            PKR {pkg.price.toLocaleString()}
-                          </span>
-                          <span className="text-sm text-gray-500 ml-1">
-                            per person
-                          </span>
+                          {/* Package Type Badge */}
+                          <Badge className="bg-green-600 hover:bg-green-700">
+                            {packageTypes.find((t) => t.value === packageType)
+                              ?.label ||
+                              packageType.charAt(0).toUpperCase() +
+                                packageType.slice(1)}
+                          </Badge>
                         </div>
-                        <Button className="bg-green-600 hover:bg-green-700">
+
+                        {/* Highlights - using features from API */}
+                        <ul className="space-y-2">
+                          {pkg.features &&
+                            pkg.features
+                              .slice(0, 3)
+                              .map((feature, featureIndex) => (
+                                <li
+                                  key={featureIndex}
+                                  className="flex items-center text-base font-medium text-gray-700 leading-5"
+                                >
+                                  <div className="w-1.5 h-1.5 bg-green-600 rounded-full mr-3" />
+                                  {feature}
+                                </li>
+                              ))}
+                        </ul>
+
+                        <Button
+                          className="w-full bg-green-600 hover:bg-green-700 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300"
+                          onClick={() => handleBookNow(pkg.id)}
+                        >
                           Book Now
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
 
           {filteredPackages.length === 0 && (

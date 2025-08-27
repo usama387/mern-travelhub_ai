@@ -9,6 +9,7 @@ import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
 import SignInPage from "./pages/Auth/SignInPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import BookingPage from "./pages/BookingPage";
+import DashboardPage from "./pages/Admin/Dashboard";
 
 const App = () => {
   return (
@@ -20,9 +21,23 @@ const App = () => {
         <Route path="/packages" element={<OurPackages />} />
         <Route path="/sign-in/*" element={<SignInPage />} />
         <Route path="/sign-up/*" element={<SignUpPage />} />
-        <Route path="/booking*" element={<BookingPage />} />
+        <Route path="/dashboard*" element={<DashboardPage />} />
 
         {/* Protected Routes */}
+        <Route
+          path="/booking/:id"
+          element={
+            <>
+              <SignedIn>
+                <BookingPage />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+
         <Route
           path="/my-bookings"
           element={
