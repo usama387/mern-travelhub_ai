@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, Star, Home, Users, Utensils, Car } from "lucide-react";
 import { useGetAllPackagesQuery } from "@/features/api/packageApi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "react-router-dom";
 
 // Helper function to format price
 const formatPrice = (price) => {
@@ -75,10 +76,16 @@ const PackageCardSkeleton = () => (
 );
 
 const PopularPackages = () => {
+  // to get all packages
   const { data, isLoading, error, refetch } = useGetAllPackagesQuery();
-  
-  // Log data for debugging
-  console.log("Fetched Packages:", data);
+
+  const navigate = useNavigate();
+
+  // to push user on booking page with package id
+  const handleBookNow = (packageId) => {
+    navigate(`/booking/${packageId}`);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <section className="py-20 bg-gradient-to-b from-background to-green-50/30">
@@ -109,7 +116,9 @@ const PopularPackages = () => {
         {/* Error State */}
         {error && (
           <div className="text-center mb-8 p-4 bg-red-50 rounded-lg">
-            <p className="text-red-700 mb-4">Error loading packages. Please try again.</p>
+            <p className="text-red-700 mb-4">
+              Error loading packages. Please try again.
+            </p>
             <Button onClick={refetch} className="bg-red-600 hover:bg-red-700">
               Retry
             </Button>
@@ -133,7 +142,7 @@ const PopularPackages = () => {
             ))
           ) : data && data.packages && data.packages.length > 0 ? (
             // Render actual package cards
-            data.packages.map((pkg, index) => (
+            data.packages.slice(0, 3).map((pkg, index) => (
               <motion.div
                 key={pkg.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -225,17 +234,22 @@ const PopularPackages = () => {
                       </Badge>
                       {/* Highlights - using features from API */}
                       <ul className="space-y-2">
-                        {pkg.features && pkg.features.map((feature, featureIndex) => (
-                          <li
-                            key={featureIndex}
-                            className="flex items-center text-base font-medium text-gray-700 leading-5"
-                          >
-                            <div className="w-1.5 h-1.5 bg-green-600 rounded-full mr-3" />
-                            {feature}
-                          </li>
-                        ))}
+                        {pkg.features &&
+                          pkg.features.map((feature, featureIndex) => (
+                            <li
+                              key={featureIndex}
+                              className="flex items-center text-base font-medium text-gray-700 leading-5"
+                            >
+                              <div className="w-1.5 h-1.5 bg-green-600 rounded-full mr-3" />
+                              {feature}
+                            </li>
+                          ))}
                       </ul>
-                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300">
+                      {/* Book now button */}
+                      <Button
+                        className="w-full bg-green-600 hover:bg-green-700 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300"
+                        onClick={() => handleBookNow(pkg.id)}
+                      >
                         Book Now
                       </Button>
                     </div>
