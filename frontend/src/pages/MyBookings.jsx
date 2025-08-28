@@ -302,7 +302,7 @@ const MyBookings = () => {
             >
               <Card className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                  <CardTitle className="text-sm font-medium">Pending Approval</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -320,7 +320,7 @@ const MyBookings = () => {
               <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Spent
+                    Total Amount
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
